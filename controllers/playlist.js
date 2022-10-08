@@ -26,7 +26,7 @@ const getPlaylist = catchAsync(async (req, res, next)=> {
 })
 
 const populatePlaylist = catchAsync(async (req, res, next)=> {
-	const playlist = await Playlist.findOne({createdBy:req.user._id, _id: req.params._id}).populate({
+	const playlist = await Playlist.findOne({createdBy:req.user._id, _id: req.params.id}).populate({
         path: "musicID",
         select: "-__v"
     })
