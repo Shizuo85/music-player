@@ -13,7 +13,7 @@ const createPlaylist = catchAsync(async (req, res, next) => {
 	if (newName){
 		return next(new AppError("Playlist already exists", 404))
 	}
-	const playlist = await playlist.create({ name: req.body.name, createdBy: req.user._id })
+	const playlist = await Playlist.create({ name: req.body.name, createdBy: req.user._id })
 	res.status(200).json({ message: 'uploaded', upload });
 });
 
