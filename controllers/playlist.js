@@ -3,6 +3,7 @@ const User = require('../models/users');
 const Playlist = require('../models/playlist');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+isEqual = require('lodash.isequal');
 
 const createPlaylist = catchAsync(async (req, res, next) => {
     if(req.body.name==undefined || typeof req.body.name!="string" || req.body.name.length<2){
@@ -64,10 +65,48 @@ const changeName = catchAsync( async (req, res, next)=> {
     res.status(200).json(playlist)
 })
 
+const addToPlaylist = catchAsync( async (req, res, next)=> {
+    const playlist = await Playlist.findOne({_id : req.params.id, createdBy: req.user._id})
+    if (!playlist){
+        return next(new AppError(`no playlist with id : ${req.params.id}`, 404))
+    }
+    const song = await Library.findOne({_id : req.body.musicID, createdBy: req.user._id})
+    if (!song){
+        return next(new AppError(`no song with id : ${req.body.musicID}`, 404))
+    }
+    musicIndex = playlist.musicID.findIndex(el => el.isEqual(song._id))
+    if (musicIndex!=-1){
+        return next(new AppError('Song already added to this playlist', 404))
+    }
+    playlist.musicID.push(song._id)
+    await playlist.save({validateBeforeSave:false})
+    res.status(200).json({message:"song added successfully"})
+})
+
+const removeFromPlaylist = catchAsync( async (req, res, next)=> {
+    const playlist = await Playlist.findOne({_id : req.params.id, createdBy: req.user._id})
+    if (!playlist){
+        return next(new AppError(`no playlist with id : ${req.params.id}`, 404))
+    }
+    const song = await Library.findOne({_id : req.body.musicID, createdBy: req.user._id})
+    if (!song){
+        return next(new AppError(`no song with id : ${req.body.musicID}`, 404))
+    }
+    musicIndex = playlist.musicID.findIndex(el => el.isEqual(song._id))
+    if (musicIndex==-1){
+        return next(new AppError(`No song with id: ${song._id} in this playlist`, 404))
+    }
+    playlist.musicID.splice(musicIndex,1)
+    await playlist.save({validateBeforeSave:false})
+    res.status(200).json({message:"song added successfully"})
+})
+
 module.exports = {
 	createPlaylist,
 	getPlaylist,
     populatePlaylist,
 	deletePlaylist,
-	changeName
+	changeName,
+    addToPlaylist,
+    removeFromPlaylist,
 };
