@@ -17,7 +17,7 @@ const { protect } = require('../controllers/users');
 
 router.route('/uploadMusic').post(protect, upload.single('audiofile'), uploadMusic);
 router.route('/getLibrary').get(protect, getLibrary);
-router.route('/deleteMusic').delete(protect, deleteMusic);
-router.route('/changeName').patch(protect, changeName);
+router.route('/deleteMusic/:id').delete(protect, deleteMusic);
+router.route('/changeName/:id').patch(protect, changeName);
 
 module.exports = router;
