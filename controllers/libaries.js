@@ -53,8 +53,9 @@ const deleteMusic = catchAsync( async (req, res, next)=> {
     }
 	let playlist = await Playlist.find({createdBy: req.user._id})
 	playlist=playlist.map(async (el) => {
-		el.musicID= el.musicID.filter(el => !isEqual(el, deleteSong._id))
+		el.musicID = el.musicID.filter(id => id!=req.params.id)
 		await el.save({validateBeforeSave: false})
+		console.log(el)
 		return el
 	})
     res.status(200).json({message: "success"})
