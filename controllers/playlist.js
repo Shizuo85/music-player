@@ -3,7 +3,7 @@ const User = require('../models/users');
 const Playlist = require('../models/playlist');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
-isEqual = require('lodash.isequal');
+const isEqual = require('lodash.isequal');
 
 const createPlaylist = catchAsync(async (req, res, next) => {
     if(req.body.name==undefined || typeof req.body.name!="string" || req.body.name.length<2){
@@ -74,7 +74,7 @@ const addToPlaylist = catchAsync( async (req, res, next)=> {
     if (!song){
         return next(new AppError(`no song with id : ${req.body.musicID}`, 404))
     }
-    musicIndex = playlist.musicID.findIndex(el => el.isEqual(song._id))
+    musicIndex = playlist.musicID.findIndex(el => isEqual(el, song._id))
     if (musicIndex!=-1){
         return next(new AppError('Song already added to this playlist', 404))
     }
@@ -92,7 +92,7 @@ const removeFromPlaylist = catchAsync( async (req, res, next)=> {
     if (!song){
         return next(new AppError(`no song with id : ${req.body.musicID}`, 404))
     }
-    musicIndex = playlist.musicID.findIndex(el => el.isEqual(song._id))
+    musicIndex = playlist.musicID.findIndex(el => isEqual(el, song._id))
     if (musicIndex==-1){
         return next(new AppError(`No song with id: ${song._id} in this playlist`, 404))
     }
