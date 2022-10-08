@@ -4,6 +4,7 @@ const Playlist = require('../models/playlist');
 const AWS = require('aws-sdk');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const isEqual = require('lodash.isequal');
 
 const s3 = new AWS.S3({
 	accessKeyId: process.env.ACCESS_KEY_ID,
@@ -50,7 +51,8 @@ const deleteMusic = catchAsync( async (req, res, next)=> {
     if(!deleteSong){
         return next(new AppError(`No song in your Library with id : ${req.params.id}`, 404))
     }
-	await Playlist.deleteMany({createdBy: req.user._id, musicID : req.params.id})
+	let playlist = await Playlist.find({createdBy: req.user._id})
+	playlist=playlist.map(el => el.musicID= el.musicID.filter(el => !isEqual(el, deleteSong._id)))
     res.status(200).json({message: "success"})
 })
 
