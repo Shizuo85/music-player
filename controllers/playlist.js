@@ -28,7 +28,7 @@ const getPlaylist = catchAsync(async (req, res, next)=> {
 const populatePlaylist = catchAsync(async (req, res, next)=> {
 	const playlist = await Playlist.findOne({createdBy:req.user._id, _id: req.params.id}).populate({
         path: "musicID",
-        select: "-__v"
+        select: "-__v -createdAt -updatedAt -_id"
     })
 	if(!playlist){
         return next(new AppError(`You do not have any playlist with id: ${req.params.id}`, 404))
