@@ -98,7 +98,7 @@ const removeFromPlaylist = catchAsync( async (req, res, next)=> {
     }
     playlist.musicID.splice(musicIndex,1)
     await playlist.save({validateBeforeSave:false})
-    res.status(200).json({message:"song added successfully"})
+    res.status(200).json({message:"song removed successfully"})
 })
 
 module.exports = {
